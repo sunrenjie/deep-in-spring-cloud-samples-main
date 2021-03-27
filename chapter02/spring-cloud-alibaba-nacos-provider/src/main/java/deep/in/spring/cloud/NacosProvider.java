@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NacosProvider {
 
     public static void main(String[] args) {
-        //SpringApplication.run(NacosProvider.class, args);
+        SpringApplication.run(NacosProvider.class, args);
         //JSON.p
         List<String> a = new ArrayList<>();
         String json = JSON.toJSONString(a);
@@ -48,7 +48,7 @@ public class NacosProvider {
     }
 
     @RestController
-    class EchoController {
+    static class EchoController {
 
         @GetMapping("/echo")
         public String echo(HttpServletRequest request) {

@@ -43,7 +43,7 @@ public class NacosConsumer {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private DiscoveryClient discoveryClient;
@@ -51,7 +51,7 @@ public class NacosConsumer {
         @Autowired
         private RestTemplate restTemplate;
 
-        private String serviceName = "my-provider";
+        private final String serviceName = "my-provider";
 
         @GetMapping("/info")
         public String info() {

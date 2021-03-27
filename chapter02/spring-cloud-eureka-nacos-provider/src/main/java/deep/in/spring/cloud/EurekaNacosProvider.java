@@ -41,7 +41,7 @@ public class EurekaNacosProvider {
 
         @GetMapping("/echo")
         public String echo(HttpServletRequest request) {
-            return "echo: " + request.getParameter("name");
+            return "EurekaNacosProvider echo: " + request.getParameter("name");
         }
 
     }
