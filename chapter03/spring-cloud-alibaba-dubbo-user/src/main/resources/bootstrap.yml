@@ -8,5 +8,5 @@ spring:
       discovery:
         enabled: true
         register-enabled: true
-        server-addr: localhost:8848
+        server-addr: nacos:8848
 

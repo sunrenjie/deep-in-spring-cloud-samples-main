@@ -18,7 +18,7 @@ package deep.in.spring.cloud;
 
 import java.util.List;
 
-import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -43,9 +43,9 @@ public class UserApplication {
     }
 
     @RestController
-    class ConsumerController {
+    static class ConsumerController {
 
-        @Reference(version = "1.0.0", protocol = "dubbo")
+        @DubboReference(version = "1.0.0", protocol = "dubbo")
         private OrderService orderService;
 
         @Autowired

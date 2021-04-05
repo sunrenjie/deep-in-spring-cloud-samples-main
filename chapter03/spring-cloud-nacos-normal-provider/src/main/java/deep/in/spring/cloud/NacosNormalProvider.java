@@ -34,7 +34,7 @@ public class NacosNormalProvider {
     }
 
     @RestController
-    class EchoController {
+    static class EchoController {
 
         @GetMapping("/")
         public String echo(HttpServletRequest request) {

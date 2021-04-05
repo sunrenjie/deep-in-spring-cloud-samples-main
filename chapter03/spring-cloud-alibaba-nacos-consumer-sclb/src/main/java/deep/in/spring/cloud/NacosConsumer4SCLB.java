@@ -44,7 +44,7 @@ public class NacosConsumer4SCLB {
 
     @Configuration
     @LoadBalancerClient(name = "nacos-provider-lb", configuration = MyLoadBalancerConfiguration.class)
-    class LoadBalanceConfiguration {
+    static class LoadBalanceConfiguration {
 
     }
 
@@ -65,7 +65,7 @@ public class NacosConsumer4SCLB {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private RestTemplate restTemplate;

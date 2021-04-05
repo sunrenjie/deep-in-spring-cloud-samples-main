@@ -51,7 +51,7 @@ public class NacosConsumer4Ribbon {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private RestTemplate restTemplate;

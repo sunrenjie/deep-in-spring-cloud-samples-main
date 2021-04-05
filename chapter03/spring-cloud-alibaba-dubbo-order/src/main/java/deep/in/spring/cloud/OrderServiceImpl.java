@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.dubbo.config.annotation.Service;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author <a href="mailto:fangjian0423@gmail.com">Jim</a>
  */
-@Service(version = "1.0.0")
+@DubboService(version = "1.0.0")
 @RestController
 public class OrderServiceImpl implements OrderService {
 
