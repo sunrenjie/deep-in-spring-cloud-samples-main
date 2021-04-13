@@ -27,7 +27,7 @@ public class EurekaConsumer {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private DiscoveryClient discoveryClient;

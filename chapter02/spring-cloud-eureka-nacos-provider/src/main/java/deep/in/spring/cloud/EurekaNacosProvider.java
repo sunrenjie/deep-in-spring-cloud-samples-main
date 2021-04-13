@@ -37,7 +37,7 @@ public class EurekaNacosProvider {
     }
 
     @RestController
-    class EchoController {
+    static class EchoController {
 
         @GetMapping("/echo")
         public String echo(HttpServletRequest request) {

@@ -40,7 +40,7 @@ public class NacosReactiveConsumer {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private ReactiveDiscoveryClient reactiveDiscoveryClient;

@@ -15,7 +15,7 @@ public class EurekaProvider {
 	}
 
     @RestController
-    class EchoController {
+    static class EchoController {
 
         @GetMapping("/echo")
         public String echo(HttpServletRequest request) {

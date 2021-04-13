@@ -47,7 +47,7 @@ public class EurekaNacosConsumer {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private DiscoveryClient discoveryClient;
