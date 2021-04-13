@@ -1,6 +1,6 @@
 ## Chapter 03
 
-## 设计
+### 设计
 
 #### maven dependencies
 
@@ -22,6 +22,8 @@ It we don't want to set spring-boot-parent as the project parent, we shall impor
 
 How to tell you need them: when we run the start-up class, it complains of missing dependencies HttpClient.
 
+Has to manually add commons-lang3.
+
 #### 端口使用
 
 原则：避免使用随机端口（server.port=0）。
@@ -35,7 +37,37 @@ How to tell you need them: when we run the start-up class, it complains of missi
 | spring-cloud-alibaba-dubbo-user            | Dubbo Spring Cloud的客户端示例（分为raw-dubbo，feign-dubbo，raw-feign三种方式） | 8087 | UserApplication           |
 | spring-cloud-nacos-normal-provider         |                                                              | 8088 |                           |
 | spring-cloud-nacos-gray-provider           |                                                              | 8089 |                           |
-|                                            |                                                              | 8090 |                           |
+| spring-cloud-nacos-consumer-ribbonenhance  |                                                              | 8888 |                           |
+
+#### 技术说明：JAX-RS
+
+在这个项目使用：spring-cloud-alibaba-nacos-consumer-openfeign
+
+feign-jaxrs：仅包括这一个接口类：JAXRSContract。
+
+然后来一个bean
+
+```java
+public class MyOpenFeignConfiguration {
+    @Bean
+    public Contract myFeignContract() {
+        return new JAXRSContract();
+    }
+}
+```
+
+定义服务：
+
+```java
+@FeignClient(name = "nacos-provider-lb", configuration = MyOpenFeignConfiguration.class, contextId = "jaxrsFeign")
+interface EchoServiceJAXRS {
+    @GET
+    @Path("/")
+    String echo();
+}
+```
+
+
 
 ### 实验
 
@@ -180,5 +212,24 @@ Transfer-Encoding: chunked
         "userId": "test"
     }
 ]
+```
+
+#### 3.8 应用流量控制
+
+启动nacos
+
+启动`spring-cloud-nacos-normal-provider`（8088）、`spring-cloud-nacos-gray-provider`（8089）、`spring-cloud-nacos-consumer-ribbonenhance`（8888）
+
+然后访问consumer的REST API：
+
+```
+>curl -s -H "gray:true" localhost:8090/echo
+192.168.0.107:8089
+>curl -s -H "gray:true" localhost:8090/echoFeign
+192.168.0.107:8089
+>curl -s localhost:8090/echoFeign
+192.168.0.107:8088
+>curl -s localhost:8090/echo
+192.168.0.107:8088
 ```
 
