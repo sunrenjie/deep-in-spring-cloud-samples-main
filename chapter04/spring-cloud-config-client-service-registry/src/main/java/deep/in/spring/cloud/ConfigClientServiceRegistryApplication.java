@@ -26,7 +26,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ServiceRegistryConfigClientServiceRegistryApplication {
+public class ConfigClientServiceRegistryApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ConfigClientServiceRegistryApplication.class);
