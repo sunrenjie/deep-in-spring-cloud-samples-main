@@ -35,7 +35,7 @@ public class ConfigClientRefreshApplication {
 
     @RestController
     @RefreshScope
-    class ConfigurationController {
+    static class ConfigurationController {
 
         @Value("${book.author:unknown}")
         String bookAuthor;

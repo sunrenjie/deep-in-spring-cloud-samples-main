@@ -60,7 +60,7 @@ public class NacosConsumer4OpenFeign {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         EchoServiceJAXRS echoServiceJAXRS;

@@ -49,7 +49,7 @@ public class NacosConfiguration {
 
     @RestController
     @RefreshScope
-    class ConfigurationController {
+    static class ConfigurationController {
 
         @Autowired
         ApplicationContext applicationContext;
@@ -75,7 +75,7 @@ public class NacosConfiguration {
     }
 
     @RestController
-    class EventController {
+    static class EventController {
 
         @Autowired
         ApplicationContext applicationContext;
@@ -89,7 +89,7 @@ public class NacosConfiguration {
     }
 
     @Component
-    class EventReceiver implements ApplicationListener<ApplicationEvent> {
+    static class EventReceiver implements ApplicationListener<ApplicationEvent> {
 
         @Override
         public void onApplicationEvent(ApplicationEvent event) {
