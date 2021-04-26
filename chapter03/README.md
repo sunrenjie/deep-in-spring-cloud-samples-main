@@ -218,7 +218,7 @@ Transfer-Encoding: chunked
 
 启动nacos
 
-启动`spring-cloud-nacos-normal-provider`（8088）、`spring-cloud-nacos-gray-provider`（8089）、`spring-cloud-nacos-consumer-ribbonenhance`（8888）
+启动`spring-cloud-nacos-normal-provider`（8088）、`spring-cloud-nacos-gray-provider`（8089）、`spring-cloud-nacos-consumer-ribbonenhance`（8090）
 
 然后访问consumer的REST API：
 
@@ -232,4 +232,3 @@ Transfer-Encoding: chunked
 >curl -s localhost:8090/echo
 192.168.0.107:8088
 ```
-
