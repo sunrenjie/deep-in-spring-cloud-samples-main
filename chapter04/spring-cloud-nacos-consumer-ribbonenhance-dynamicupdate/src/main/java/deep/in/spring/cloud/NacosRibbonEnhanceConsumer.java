@@ -72,7 +72,7 @@ public class NacosRibbonEnhanceConsumer {
     }
 
     @RestController
-    class HelloController {
+    static class HelloController {
 
         @Autowired
         private RestTemplate restTemplate;
