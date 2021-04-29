@@ -24,6 +24,8 @@ How to tell you need them: when we run the start-up class, it complains of missi
 
 Has to manually add commons-lang3.
 
+* Artificial `com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:jar:2.2.0.RELEASE` imports `org.apache.commons:commons-lang3:jar:3.9`, yet its later version `2.2.5.RELEASE` this dependency is removed. This is revealed by comparing output of `mvn package -X`.
+
 #### 端口使用
 
 原则：避免使用随机端口（server.port=0）。
