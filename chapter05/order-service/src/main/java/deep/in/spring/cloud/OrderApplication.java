@@ -21,6 +21,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author <a href="mailto:fangjian0423@gmail.com">Jim</a>
  */
 @SpringBootApplication
+@EnableFeignClients
 public class OrderApplication {
 
     public static void main(String[] args) {
@@ -38,7 +40,7 @@ public class OrderApplication {
     }
 
     @RestController
-    class OrderController {
+    static class OrderController {
 
         @Autowired
         private DeliveryService deliveryService;
@@ -65,7 +67,7 @@ public class OrderApplication {
 
     }
 
-    class FallbackInventoryService implements DeliveryService {
+    static class FallbackInventoryService implements DeliveryService {
 
         @Override
         public String delivery(String orderId) {
@@ -73,7 +75,7 @@ public class OrderApplication {
         }
     }
 
-    class FallbackFactory implements feign.hystrix.FallbackFactory {
+    static class FallbackFactory implements org.springframework.cloud.openfeign.FallbackFactory<Object> {
 
         private FallbackInventoryService fallbackService = new FallbackInventoryService();
 

@@ -64,7 +64,7 @@ public class SentinelOpenFeignApplication {
         return new FallbackFactory();
     }
 
-    class FallbackFactory implements feign.hystrix.FallbackFactory {
+    static class FallbackFactory implements org.springframework.cloud.openfeign.FallbackFactory<Object> {
 
         private FallbackService fallbackService = new FallbackService();
 
@@ -80,7 +80,7 @@ public class SentinelOpenFeignApplication {
         }
     }
 
-    class FallbackService implements BuyService, InventoryService {
+    static class FallbackService implements BuyService, InventoryService {
         @Override
         public String buy() {
             return "buy degrade by sentinel";
@@ -92,7 +92,7 @@ public class SentinelOpenFeignApplication {
         }
     }
 
-    class DefaultBusinessService implements BuyService, InventoryService {
+    static class DefaultBusinessService implements BuyService, InventoryService {
         @Override
         public String buy() {
             return "buy error";
@@ -105,6 +105,9 @@ public class SentinelOpenFeignApplication {
 
     }
 
+    // This class could not be decorated as static, as it expects to auto-wire a bean from the outer class.
+    // When SentinelSpringCloudCircuitBreakerApplication is run, this class is loaded as a bean yet the outer class is
+    // not; the net result is that SentinelSpringCloudCircuitBreakerApplication is broken.
     @RestController
     class SentinelController {
 

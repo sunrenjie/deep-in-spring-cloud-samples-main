@@ -43,7 +43,7 @@ public class Resilience4JSpringCloudCircuitBreakerApplication {
     }
 
     @RestController
-    class Resilience4JController {
+    static class Resilience4JController {
         @Autowired
         CircuitBreakerFactory circuitBreakerFactory;
 

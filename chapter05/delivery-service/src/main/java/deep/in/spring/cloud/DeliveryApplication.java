@@ -37,6 +37,7 @@ public class DeliveryApplication {
         SpringApplication.run(DeliveryApplication.class, args);
     }
 
+    // This class could not be decorated as static, as it expects to auto-wire a bean from the outer class.
     @RestController
     class DeliveryController {
 
@@ -68,7 +69,7 @@ public class DeliveryApplication {
 
     }
 
-    class FallbackInventoryService implements SMSService {
+    static class FallbackInventoryService implements SMSService {
 
         @Override
         public String send(String orderId, int delaySecs) {
@@ -76,7 +77,7 @@ public class DeliveryApplication {
         }
     }
 
-    class FallbackFactory implements feign.hystrix.FallbackFactory {
+    static class FallbackFactory implements feign.hystrix.FallbackFactory<Object> {
 
         private FallbackInventoryService fallbackService = new FallbackInventoryService();
 

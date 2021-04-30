@@ -34,7 +34,7 @@ public class SMSApplication {
     }
 
     @RestController
-    class SMSController {
+    static class SMSController {
 
         private AtomicInteger count = new AtomicInteger();
 

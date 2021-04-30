@@ -23,7 +23,8 @@ spring:
         file: "classpath: gateway.json"
         ruleType: gw-flow
       transport:
-        dashboard: localhost:8080
+        dashboard: localhost:9090
       scg.fallback:
           mode: response
           response-status: 429
+      eager: true

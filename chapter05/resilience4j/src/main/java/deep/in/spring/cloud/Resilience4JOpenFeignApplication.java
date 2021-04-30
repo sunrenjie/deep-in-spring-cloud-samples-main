@@ -75,7 +75,7 @@ public class Resilience4JOpenFeignApplication {
 
     }
 
-    public class MyFallback implements InventoryService {
+    static public class MyFallback implements InventoryService {
 
         private Exception cause;
 
@@ -94,7 +94,7 @@ public class Resilience4JOpenFeignApplication {
     }
 
     @RestController
-    class Resilience4JController {
+    static class Resilience4JController {
 
         @Autowired
         InventoryService inventoryService;

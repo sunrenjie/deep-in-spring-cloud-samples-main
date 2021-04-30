@@ -60,7 +60,7 @@ public class Resilience4JOpenFeign2Application {
     }
 
     @RestController
-    class Resilience4JController {
+    static class Resilience4JController {
 
         @Autowired
         InventoryService inventoryService;
