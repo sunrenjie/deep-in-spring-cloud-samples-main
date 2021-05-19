@@ -354,3 +354,18 @@ See in AbstractCircuitBreaker:
     }
 ```
 
+### 5.5 Hystrix 与 OpenFeign，Spring Cloud Circuit Breaker 的整合
+
+#### Hystrix circuit-breaker key logic
+
+##### HystrixOpenFeignApplication (with profile openfeign)
+
+OnSubscribeThrow#call() called; the internal field exception is ```feign.RetryableException: httpbin.org executing GET https://httpbin.org/delay/3```
+
+HystrixInvocationHandler#invoke(): to fetch fallback method and invoke it:
+
+```
+              Object fallback = fallbackFactory.create(getExecutionException());
+              Object result = fallbackMethodMap.get(method).invoke(fallback, args);
+```
+

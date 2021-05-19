@@ -99,7 +99,159 @@ Caused by: com.netflix.client.ClientException: Load balancer does not have avail
 
 #### 5.5 Hystrix 与 OpenFeign，Spring Cloud Circuit Breaker 的整合
 
+##### Module: netflix-hystrix
 
+##### Start up class HystrixFlowControlApplication：演示流量控制
+
+主要是`application-flowcontrol.properties`的参数的演示。
+
+```properties
+hystrix.command.Hello.execution.isolation.semaphore.maxConcurrentRequests=0
+hystrix.command.Hello.execution.isolation.strategy=SEMAPHORE
+hystrix.command.Hello.execution.timeout.enabled=false
+```
+
+此时所有的请求都无法通过，一律熔断：
+
+```
+C:\>http localhost:8080/hello/
+HTTP/1.1 200
+Connection: keep-alive
+Content-Length: 16
+Content-Type: text/plain;charset=UTF-8
+Date: Wed, 19 May 2021 01:13:25 GMT
+Keep-Alive: timeout=60
+
+Hystrix fallback
+```
+
+将`hystrix.command.Hello.execution.isolation.semaphore.maxConcurrentRequests`值改为1或者以上则可以恢复访问。
+
+###### Start up class HystrixKeyApplication：演示使用注释为@RestController类配置hystrix熔断
+
+支持常见的hystrix参数（`execution.isolation。*`之类），演示threadPoolKey的使用。
+
+根据HystrixThreadPoolMetrics#getInstance()，相同的threadPoolKey享有相同的执行策略；系统总是使用第一个生效的@HystrixCommand配置进行构建HystrixThreadPoolMetrics，到遇上相同threadPoolKey的第二个@HystrixCommand时，直接使用已构建的HystrixThreadPoolMetrics对象（所以其配置被忽略？）。
+
+```
+    public static HystrixThreadPoolMetrics getInstance(HystrixThreadPoolKey key, ThreadPoolExecutor threadPool, HystrixThreadPoolProperties properties) {
+        // attempt to retrieve from cache first
+        HystrixThreadPoolMetrics threadPoolMetrics = metrics.get(key.name());
+        if (threadPoolMetrics != null) {
+            return threadPoolMetrics;
+        } else {
+            synchronized (HystrixThreadPoolMetrics.class) {
+                HystrixThreadPoolMetrics existingMetrics = metrics.get(key.name());
+                if (existingMetrics != null) {
+                    return existingMetrics;
+                } else {
+                    HystrixThreadPoolMetrics newThreadPoolMetrics = new HystrixThreadPoolMetrics(key, threadPool, properties);
+                    metrics.putIfAbsent(key.name(), newThreadPoolMetrics);
+                    return newThreadPoolMetrics;
+                }
+            }
+        }
+    }
+```
+
+所以singleThread2()方法实际上使用了singleThread()相同的HystrixThreadPoolMetrics（这包含了线程池的基本参数还有具体ThreadPoolExecutor对象）。
+
+向内部线程池投递任务（请求+熔断逻辑）位于HystrixContextScheduler$ThreadPoolWorker#schedule()，线程池的构建位于HystrixConcurrencyStrategy#getThreadPool()，使用参数数据源是HystrixThreadPoolProperties（读取自配置）。
+
+###### Start up class HystrixOpenFeignApplication with profile = openfeign
+
+配置文件：
+
+```
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=3000
+hystrix.command.default.metrics.rollingStats.timeInMilliseconds=1000
+hystrix.command.default.circuitBreaker.requestVolumeThreshold=3
+hystrix.command.default.circuitBreaker.errorThresholdPercentage=100
+hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
+```
+
+超时熔断时间`hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds`是3s。
+
+因为`/buy`的业务代码请求的是`https://httpbin.org/delay/3`，所以熔断总是会发生：
+
+```
+>http localhost:8080/buy
+HTTP/1.1 200
+Connection: keep-alive
+Content-Length: 22
+Content-Type: text/plain;charset=UTF-8
+Date: Tue, 11 May 2021 13:45:53 GMT
+Keep-Alive: timeout=60
+
+buy degrade by hystrix
+```
+
+异常的传播与处理起始代码位于AbstractCommand$HystrixObservableTimeoutOperator$1：
+
+```java
+            final HystrixContextRunnable timeoutRunnable = new HystrixContextRunnable(originalCommand.concurrencyStrategy, new Runnable() {
+
+                @Override
+                public void run() {
+                    child.onError(new HystrixTimeoutException());
+                }
+            });
+```
+
+异常的触发代码位于com.netflix.hystrix.AbstractCommand$HystrixObservableTimeoutOperator$2：
+
+```java
+            TimerListener listener = new TimerListener() {
+
+                @Override
+                public void tick() {
+                    // if we can go from NOT_EXECUTED to TIMED_OUT then we do the timeout codepath
+                    // otherwise it means we lost a race and the run() execution completed or did not start
+                    if (originalCommand.isCommandTimedOut.compareAndSet(TimedOutStatus.NOT_EXECUTED, TimedOutStatus.TIMED_OUT)) {
+                        // report timeout failure
+                        originalCommand.eventNotifier.markEvent(HystrixEventType.TIMEOUT, originalCommand.commandKey);
+
+                        // shut down the original request
+                        s.unsubscribe();
+
+                        timeoutRunnable.run();
+                        //if it did not start, then we need to mark a command start for concurrency metrics, and then issue the timeout
+                    }
+                }
+
+                @Override
+                public int getIntervalTimeInMilliseconds() {
+                    return originalCommand.properties.executionTimeoutInMilliseconds().get();
+                }
+            };
+```
+
+将参数`hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds`改为比如10000，请求就能成功：
+
+```
+>http localhost:8080/buy
+HTTP/1.1 200
+Connection: keep-alive
+Content-Length: 322
+Content-Type: text/plain;charset=UTF-8
+Date: Tue, 11 May 2021 13:41:17 GMT
+Keep-Alive: timeout=60
+
+{
+    "args": {},
+    "data": "",
+    "files": {},
+    "form": {},
+    "headers": {
+        "Accept": "*/*",
+        "Host": "httpbin.org",
+        "User-Agent": "Java/1.8.0_212-1-ojdkbuild",
+        "X-Amzn-Trace-Id": "Root=1-609a8978-4c212f44342ad2a270976e80"
+    },
+    "origin": "183.158.248.222",
+    "url": "https://httpbin.org/delay/3"
+}
+```
 
 #### 5.5.3 Hystrix 限流
 
@@ -107,11 +259,7 @@ Hystrix的限流策略逻辑配置：既可以在Java代码中配置（比如 `H
 
 * 果然，HystrixPropertiesCommandDefault并没有被注释。
 
-
-
 ##### Hystrix 仪表盘：netflix-hystrix-dashboard
-
-
 
 ##### Hystrix 对 spring-cloud-gateway 限流：netflix-hystrix-spring-cloud-gateway
 

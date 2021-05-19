@@ -42,7 +42,7 @@ public class HystrixKeyApplication {
     }
 
     @RestController
-    class HystrixController {
+    static class HystrixController {
 
         @HystrixCommand(commandKey = "hello", fallbackMethod = "fallback",
             commandProperties = {

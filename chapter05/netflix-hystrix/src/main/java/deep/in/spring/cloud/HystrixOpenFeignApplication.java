@@ -63,7 +63,7 @@ public class HystrixOpenFeignApplication {
         return new FallbackFactory();
     }
 
-    class FallbackFactory implements feign.hystrix.FallbackFactory {
+    class FallbackFactory implements feign.hystrix.FallbackFactory<Object> {
 
         private FallbackService fallbackService = new FallbackService();
 
@@ -80,7 +80,7 @@ public class HystrixOpenFeignApplication {
         }
     }
 
-    class FallbackService implements BuyService, InventoryService {
+    static class FallbackService implements BuyService, InventoryService {
         @Override
         public String buy() {
             return "buy degrade by hystrix";
@@ -92,7 +92,7 @@ public class HystrixOpenFeignApplication {
         }
     }
 
-    class DefaultBusinessService implements BuyService, InventoryService {
+    static class DefaultBusinessService implements BuyService, InventoryService {
         @Override
         public String buy() {
             return "buy error";
