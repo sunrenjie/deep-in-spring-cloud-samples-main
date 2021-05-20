@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Set debug to true to output start-up context info. -->
+<configuration debug="true">
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Including logger name, class name, and file line number can be useful.
+            See also http://logback.qos.ch/manual/layouts.html -->
+            <Pattern>
+                %d{ISO8601} %highlight(%-5level) [%blue(%t)] %logger{15} %yellow(%C{15}.%M\(\):%L) %msg%n%throwable
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <!-- LOG everything at INFO level -->
+    <root level="debug">
+        <appender-ref ref="Console" />
+    </root>
+</configuration>
+
